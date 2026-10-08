@@ -1,9 +1,9 @@
-from flask import Flask
+from flask import Flask, redirect, url_for
 from loja.ext import database, admin, appearance, configuration
 from loja.blueprints import webui, restapi
 
-def create_app(**config): 
 
+def create_app(**config):
     app = Flask(__name__, template_folder='templates')
     configuration.init_app(app, **config)
     database.init_app(app)
@@ -12,6 +12,14 @@ def create_app(**config):
     webui.init_app(app)
     restapi.init_app(app)
 
+    # Redireciona a raiz '/' para a vitrine de produtos
+    @app.route("/")
+    def index_redirect():
+        return redirect(url_for("webui.index"))
+
+    # Redireciona '/login' para a rota oficial de login do blueprint
+    @app.route("/login")
+    def login_redirect():
+        return redirect(url_for("webui.login"))
+
     return app
-
-
