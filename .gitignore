@@ -1,0 +1,23 @@
+# Python / Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+venv/
+env/
+
+# Banco de dados e instâncias locais (não versionar dados do SQLite)
+instance/
+*.db
+*.sqlite3
+
+# Ambientes e Variáveis de Ambiente
+.env
+.env.*
+secrets.toml
+
+# IDEs e Editores
+.vscode/
+.idea/
+*.swp
