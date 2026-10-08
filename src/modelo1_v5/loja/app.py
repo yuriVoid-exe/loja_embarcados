@@ -12,14 +12,16 @@ def create_app(**config):
     webui.init_app(app)
     restapi.init_app(app)
 
-    # Redireciona a raiz '/' para a vitrine de produtos
     @app.route("/")
     def index_redirect():
         return redirect(url_for("webui.index"))
 
-    # Redireciona '/login' para a rota oficial de login do blueprint
     @app.route("/login")
     def login_redirect():
         return redirect(url_for("webui.login"))
+
+    @app.route("/register")
+    def register_redirect():
+        return redirect(url_for("webui.register"))
 
     return app
