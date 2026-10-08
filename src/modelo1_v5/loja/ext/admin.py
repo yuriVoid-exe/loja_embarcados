@@ -1,10 +1,34 @@
 from loja.ext.database import db
-from loja.model import Product
+from loja.model import Product, User
 from flask_babel import Babel
-from flask_admin import Admin
+from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
+from flask import session, redirect, url_for, request
+
+class ProtectedModelView(ModelView):
+    def is_accessible(self):
+        return session.get("is_admin") is True
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for("webui.login", next=request.url))
+
+
+class ProtectedAdminIndexView(AdminIndexView):
+    def is_accessible(self):
+        return session.get("is_admin") is True
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for("webui.login", next=request.url))
+
 
 def init_app(app):
     babel = Babel(app)
-    admin = Admin(app)
-    admin.add_view(ModelView(Product, db.session))
+    admin = Admin(
+        app,
+        name="Painel Architech",
+        template_mode="bootstrap4",
+        index_view=ProtectedAdminIndexView()
+    )
+
+    admin.add_view(ProtectedModelView(Product, db.session))
+    admin.add_view(ProtectedModelView(User, db.session))
