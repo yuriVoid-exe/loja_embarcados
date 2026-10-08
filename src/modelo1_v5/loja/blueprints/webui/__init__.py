@@ -1,5 +1,5 @@
 from flask import Blueprint
-from .views import index, product, login, logout
+from .views import index, product, login, logout, register
 
 bp = Blueprint(
     'webui',
@@ -16,6 +16,7 @@ bp.add_url_rule(
 )
 bp.add_url_rule("/login", view_func=login, methods=["GET", "POST"], endpoint="login")
 bp.add_url_rule("/logout", view_func=logout, endpoint="logout")
+bp.add_url_rule("/register", view_func=register, methods=["GET", "POST"], endpoint="register")
 
 
 def init_app(app):

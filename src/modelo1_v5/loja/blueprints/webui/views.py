@@ -17,6 +17,39 @@ def product(product_id):
     return render_template("product.html", product=product)
 
 
+def register():
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "")
+        confirm_password = request.form.get("confirm_password", "")
+
+        # Validações básicas de entrada
+        if not username or not password:
+            flash("Preencha todos os campos.", "warning")
+            return render_template("register.html")
+
+        if password != confirm_password:
+            flash("As senhas não coincidem.", "danger")
+            return render_template("register.html")
+
+        # Verifica se o usuário já existe
+        if User.query.filter_by(username=username).first():
+            flash("Nome de usuário já cadastrado. Escolha outro.", "danger")
+            return render_template("register.html")
+
+        # Criação do novo usuário (por padrão is_admin=False)
+        new_user = User(username=username, is_admin=False)
+        new_user.set_password(password)
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        flash("Cadastro realizado com sucesso! Faça seu login.", "success")
+        return redirect(url_for("webui.login"))
+
+    return render_template("register.html")
+
+
 def login():
     if request.method == "POST":
         username = request.form.get("username")
@@ -30,7 +63,7 @@ def login():
             session["is_admin"] = user.is_admin
             flash("Login realizado com sucesso!", "success")
 
-            next_page = request.args.get("next") or url_for("admin.index")
+            next_page = request.args.get("next") or url_for("webui.index")
             return redirect(next_page)
 
         flash("Usuário ou senha inválidos.", "danger")
